@@ -3,7 +3,7 @@ import csv
 import urllib
 import random
 
-API_KEY = os.getenv('TEAMROCKETKEY')
+API_TOKEN = os.getenv('TEAMROCKETKEY')
 
 CHANNEL = '#team-rocket'
 DEFAULT_REPLY = (
@@ -20,6 +20,8 @@ POKEMON_LIST = [x['identifier'] for x in POKE_DATA]
 
 TEAM_VALOR_MEMBERS = ['james', 'jsantucci', 'joe', 'jmorrison', 'matt',
                       'mwilliams']
+
+ERRORS_TO = 'jsantucci'
 
 
 def MOTTO():

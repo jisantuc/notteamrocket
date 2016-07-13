@@ -18,37 +18,45 @@ def username_from_message(prompt):
         return 'An unknown pokemon'
 
 
-def make_gym_message(prompt):
-    user = username_from_message(prompt)
+def decide_to_send(message):
+    user = username_from_message(message)
+    if user in settings.TEAM_VALOR_MEMBERS:
+        return False
+    else:
+        return user
+
+
+def make_gym_message(user):
     return '{} is talkin\' about gyms, look out!'.format(user)
 
 
-def make_team_member_message(prompt, team_member):
-    user = username_from_message(prompt)
+def make_team_member_message(user, team_member):
     return '{} is talkin\' about {}, look out!'.format(user, team_member)
 
 
 @listen_to(r'.*gym.*', re.IGNORECASE)
 def whose_talkin_bout_gyms(message):
-    if message._body['channel'] == 'mystic-go':
+    user = decide_to_send(message)
+    if user:
         send_message(message,
-                     make_gym_message(message))
+                     make_gym_message(user))
 
 
 @listen_to(r'.*(' + '|'.join(settings.TEAM_VALOR_MEMBERS) + ').*',
            re.IGNORECASE)
 def whose_talkin_bout_valor(message, valor_member):
-    if message._body['channel'] == 'mystic-go':
-        send_message(message,
-                     make_team_member_message(message, valor_member))
+    user = decide_to_send(message)
+    send_message(message,
+                 make_team_member_message(user, valor_member))
 
 
 @listen_to(r'.*(' + '|'.join(settings.POKEMON_LIST) + ').*',
            re.IGNORECASE)
 def whose_talkin_bout_pokemon(message, pokemon):
-    # if message._body['channel'] == 'mystic-go':
-    send_message(message,
-                 'Blue team is talking about {}'.format(pokemon))
+    user = decide_to_send(message)
+    if user:
+        send_message(message,
+                     '{} is talking about {}'.format(user, pokemon))
 
 
 @respond_to(r'.*')
